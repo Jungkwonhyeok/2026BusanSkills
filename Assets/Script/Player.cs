@@ -8,14 +8,16 @@ public class Player : MonoBehaviour
     float moveZ;
 
     public float HP = 100;
-    public float mSpeed = 50;
+    public float curSpeed = 0;
+    public float goSpeed = 10;
+    public float backSpeed = 15;
+    public float maxSpeed=50;
     public float rSpeed = 100;
 
     void Update()
     {
         GetInput();
         Move();
-        turn();
         ClampToScreen();
     }
 
@@ -27,18 +29,24 @@ public class Player : MonoBehaviour
 
     void Move()
     {
-        transform.position += transform.forward * moveZ * mSpeed * Time.deltaTime;
-    }
+        if (moveZ > 0)
+        {
+            curSpeed += goSpeed * Time.deltaTime;
+        }
+        if (moveZ < 0)
+        {
+            curSpeed -= backSpeed * Time.deltaTime;
+        }
+        curSpeed = Mathf.Clamp(curSpeed,0,maxSpeed);
+        transform.Translate(Vector3.forward * curSpeed * Time.deltaTime);
 
-    void turn()
-    {
         transform.Rotate(0, moveX * rSpeed * Time.deltaTime, 0);
     }
 
     void ClampToScreen()
     {
         Vector3 pos = transform.position;
-        pos.x = Mathf.Clamp(pos.x, -80, 80);
+        pos.x = Mathf.Clamp(pos.x, -85, 85);
         pos.z = Mathf.Clamp(pos.z, -45, 45);
         transform.position = pos;
     }
